@@ -1,4 +1,5 @@
 import re
+import sys
 
 class IndexGenerator(object):
     """Class which converts * to number points and . to space indentation"""
@@ -9,7 +10,7 @@ class IndexGenerator(object):
 
     def __init__(self, text, output_file_path):
         self.outline = []
-        self.text = text
+        self.text = text.readlines()
         self.output = []
         self.stack = []
         self.output_file_path = output_file_path
@@ -65,20 +66,20 @@ class IndexGenerator(object):
 
 
     def generate(self):
-        for i in self.text.split('\n'):
+        for i in self.text:
             splitted_txt = self.split(i)
             if splitted_txt:
                 indexed_text = self.get_indent_level(splitted_txt)
         self.output = ['{} {}'.format(i[0], i[1]) for i in self.stack]
 
-        with open(output_file_path, 'w') as fh:
-            fh.write('\n'.join(self.output))
+        self.output_file_path.write('\n'.join(self.output))
+        self.output_file_path.close()
 
 
 if __name__ == '__main__':
-    import sys
-    text = sys.argv[0]
-    output_file_path = sys.argv[1]
+
+    text = sys.stdin
+    output_file_path = sys.stdout
 
     generator = IndexGenerator(text, output_file_path)
     generator.generate()
